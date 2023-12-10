@@ -19,8 +19,7 @@ typedef struct Ball {
 } Ball;
 
 typedef struct Physics {
-    Vector2 gravityVector;
-    float dampeningFactor;
+    float gravityConstant;
 } Physics;
 
 void doInitialization(InitConfig config);
@@ -38,25 +37,42 @@ int main(void)
     doInitialization(config);
 
     Physics physics = {
-            .gravityVector = (Vector2){0.0f, 6.0f},
-            .dampeningFactor = 0.8f
+            .gravityConstant = 1.0f,
     };
 
-    Ball greenBall = {
-            .pos = {(float)config.SCREEN_WIDTH / 2, 0.0f + 20},
+    Ball luna = {
+            .pos = {(float)config.SCREEN_WIDTH / 2, 0.0f + 60},
+            .radius = 5,
+            .mass = 25,
+            .velocity = { 10.0f, 0.0f },
+            .force = {0.0f, 0.0f},
+            WHITE
+    };
+
+    Ball potato = {
+            .pos = {(float)config.SCREEN_WIDTH / 2, (float)config.SCREEN_HEIGHT - 60},
+            .radius = 5,
+            .mass = 25,
+            .velocity = { -10.0f, 0.0f },
+            .force = {0.0f, 0.0f},
+            YELLOW
+    };
+
+    Ball earth = {
+            .pos = {(float)config.SCREEN_WIDTH / 2, (float)config.SCREEN_HEIGHT / 2 },
             .radius = 20,
-            .mass = 1,
+            .mass = 700,
             .velocity = { 0.0f, 0.0f },
-            .force = physics.gravityVector,
-            GREEN
+            .force = {0.0f, 0.0f},
+            BLUE
     };
 
-    Ball *balls[] = {&greenBall};
+    Ball *balls[] = {&earth, &luna, &potato};
 
     while (!WindowShouldClose())
     {
-        doUpdate(balls, 1, physics);
-        doDrawing(balls, 1);
+        doUpdate(balls, 3, physics);
+        doDrawing(balls, 3);
     }
 
     CloseWindow();
@@ -78,14 +94,29 @@ void doInitialization(InitConfig config) {
 //    return (int)floorf(metres / 0.01f);
 //}
 
+Vector2 computeGravity(Ball *ball1, Ball *ball2, Physics physics) {
+    // Gravity felt by ball2
+    Vector2 displacement = Vector2Subtract(ball1->pos, ball2->pos);
+    float gravityMag = (physics.gravityConstant * ball1->mass * ball2->mass) / Vector2LengthSqr(displacement);
+    return Vector2Scale(Vector2Normalize(displacement), gravityMag);
+}
+
 void doUpdate(Ball **balls, int totalBalls, Physics physics) {
     float dt = GetFrameTime();
     for (int i = 0; i < totalBalls; i++) {
         Ball *ball = balls[i];
+        Vector2 gravityTotal = {0.0f, 0.0f};
+        for (int j = 0; j < totalBalls; j++) {
+            if (i != j) {
+                Ball *otherBall = balls[j];
+                Vector2 gravity = computeGravity(otherBall, ball, physics);
+                gravityTotal = Vector2Add(gravityTotal, gravity);
+            }
+        }
         // Update position from last velocity
         ball->pos = Vector2Add(ball->pos, Vector2Scale(ball->velocity, dt));
         // Update velocity for next frame
-        ball->velocity = Vector2Add(ball->velocity, Vector2Scale(physics.gravityVector, dt));
+        ball->velocity = Vector2Add(ball->velocity, Vector2Scale(gravityTotal, dt));
     }
 }
 
