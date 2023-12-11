@@ -101,6 +101,15 @@ Vector2 computeGravity(Ball *ball1, Ball *ball2, Physics physics) {
     return Vector2Scale(Vector2Normalize(displacement), gravityMag);
 }
 
+Vector2 computeGravityNDimension(Ball *ball1, Ball *ball2, Physics physics, int dimension) {
+    // Generalisasi. Nyoba kalo ada N-dimensi ruang
+    Vector2 displacement = Vector2Subtract(ball1->pos, ball2->pos);
+    float distance = Vector2Length(displacement);
+    float distanceFactor = (float)pow(distance, dimension - 1);
+    float gravityMag = (physics.gravityConstant * ball1->mass * ball2->mass) / distanceFactor;
+    return Vector2Scale(Vector2Normalize(displacement), gravityMag);
+}
+
 void doUpdate(Ball **balls, int totalBalls, Physics physics) {
     float dt = GetFrameTime();
     for (int i = 0; i < totalBalls; i++) {
