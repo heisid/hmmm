@@ -37,23 +37,23 @@ int main(void)
     doInitialization(config);
 
     Physics physics = {
-            .gravityConstant = 1.0f,
+            .gravityConstant = 50.0f,
     };
 
     Ball luna = {
             .pos = {(float)config.SCREEN_WIDTH / 2, 0.0f + 60},
             .radius = 5,
-            .mass = 25,
-            .velocity = { 10.0f, 0.0f },
+            .mass = 200,
+            .velocity = { 50.0f, 0.0f },
             .force = {0.0f, 0.0f},
             WHITE
     };
 
     Ball potato = {
-            .pos = {(float)config.SCREEN_WIDTH / 2, (float)config.SCREEN_HEIGHT - 60},
+            .pos = {(float)config.SCREEN_WIDTH / 2, (float)config.SCREEN_HEIGHT - 80},
             .radius = 5,
-            .mass = 25,
-            .velocity = { -10.0f, 0.0f },
+            .mass = 200,
+            .velocity = { -55.0f, 0.0f },
             .force = {0.0f, 0.0f},
             YELLOW
     };
@@ -61,18 +61,18 @@ int main(void)
     Ball earth = {
             .pos = {(float)config.SCREEN_WIDTH / 2, (float)config.SCREEN_HEIGHT / 2 },
             .radius = 20,
-            .mass = 700,
+            .mass = 10000,
             .velocity = { 0.0f, 0.0f },
             .force = {0.0f, 0.0f},
             BLUE
     };
 
-    Ball *balls[] = {&earth, &luna, &potato};
+    Ball *balls[] = {&earth, &luna};
 
     while (!WindowShouldClose())
     {
-        doUpdate(balls, 3, physics);
-        doDrawing(balls, 3);
+        doUpdate(balls, 2, physics);
+        doDrawing(balls, 2);
     }
 
     CloseWindow();
@@ -105,6 +105,7 @@ void doUpdate(Ball **balls, int totalBalls, Physics physics) {
     float dt = GetFrameTime();
     for (int i = 0; i < totalBalls; i++) {
         Ball *ball = balls[i];
+        // Sum over gravity felt from all other balls
         Vector2 gravityTotal = {0.0f, 0.0f};
         for (int j = 0; j < totalBalls; j++) {
             if (i != j) {
@@ -115,8 +116,10 @@ void doUpdate(Ball **balls, int totalBalls, Physics physics) {
         }
         // Update position from last velocity
         ball->pos = Vector2Add(ball->pos, Vector2Scale(ball->velocity, dt));
+        // a = F / m
+        Vector2 acceleration = Vector2Scale(gravityTotal, 1.0f / ball->mass);
         // Update velocity for next frame
-        ball->velocity = Vector2Add(ball->velocity, Vector2Scale(gravityTotal, dt));
+        ball->velocity = Vector2Add(ball->velocity, Vector2Scale(acceleration, dt));
     }
 }
 
