@@ -29,19 +29,19 @@ void doUpdate(Ball **balls, int totalBalls, Physics physics);
 int main(void)
 {
     InitConfig config = {
-            800,
-            500,
+            1500,
+            900,
             "Just a fucking test",
             60
     };
     doInitialization(config);
 
     Physics physics = {
-            .gravityConstant = 50.0f,
+            .gravityConstant = 70.0f,
     };
 
     Ball luna = {
-            .pos = {(float)config.SCREEN_WIDTH / 2, 0.0f + 60},
+            .pos = {(float)config.SCREEN_WIDTH / 2, 0.0f + 100},
             .radius = 5,
             .mass = 200,
             .velocity = { 50.0f, 0.0f },
@@ -50,10 +50,10 @@ int main(void)
     };
 
     Ball potato = {
-            .pos = {(float)config.SCREEN_WIDTH / 2, (float)config.SCREEN_HEIGHT - 80},
+            .pos = {(float)config.SCREEN_WIDTH / 2, (float)config.SCREEN_HEIGHT - 320},
             .radius = 5,
             .mass = 200,
-            .velocity = { -55.0f, 0.0f },
+            .velocity = { -80.0f, 0.0f },
             .force = {0.0f, 0.0f},
             YELLOW
     };
@@ -61,18 +61,18 @@ int main(void)
     Ball earth = {
             .pos = {(float)config.SCREEN_WIDTH / 2, (float)config.SCREEN_HEIGHT / 2 },
             .radius = 20,
-            .mass = 10000,
+            .mass = 15000,
             .velocity = { 0.0f, 0.0f },
             .force = {0.0f, 0.0f},
             BLUE
     };
 
-    Ball *balls[] = {&earth, &luna};
+    Ball *balls[] = {&earth, &luna, &potato};
 
     while (!WindowShouldClose())
     {
-        doUpdate(balls, 2, physics);
-        doDrawing(balls, 2);
+        doUpdate(balls, 3, physics);
+        doDrawing(balls, 3);
     }
 
     CloseWindow();
