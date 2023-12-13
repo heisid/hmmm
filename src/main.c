@@ -1,10 +1,11 @@
 #include "raylib.h"
-#include "raymath.h"
 
 
 typedef struct InitConfig {
     int SCREEN_WIDTH;
     int SCREEN_HEIGHT;
+    int ORIGIN_X;
+    int ORIGIN_Y;
     char TITLE[20];
     int TARGET_FPS;
 } InitConfig;
@@ -18,7 +19,9 @@ int main(void)
     InitConfig config = {
             1500,
             900,
-            "Just a fucking test",
+            1500 / 2,
+            900 / 2,
+            "Cool shit",
             60
     };
     doInitialization(config);
