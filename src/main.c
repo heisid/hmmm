@@ -2,6 +2,7 @@
 #include <stdio.h>
 
 #include "raylib.h"
+#include "raymath.h"
 
 
 typedef struct Config {
@@ -19,17 +20,25 @@ typedef struct Line {
     Color color;
 } Line;
 
+typedef struct Object {
+    int posX;
+    int posY;
+    float radius;
+    Color color;
+    float charge;
+} Object;
+
 typedef struct VectorField {
     int colSize;
     int rowSize;
     int spacing;
-    Line **lines; // col then row
+    Line **lines;
 } VectorField;
 
 void Initialize(Config config);
 void InitializeVectorField(VectorField *vectorField, int colSize, int rowSize);
-void doDrawing(VectorField *vectorField, int colSize, int rowSize);
-void doUpdate();
+void doDrawing(VectorField *vectorField, int colSize, int rowSize, Object *object);
+void doUpdate(VectorField *vectorField, Object *object);
 
 int main(void)
 {
@@ -55,10 +64,18 @@ int main(void)
     };
     InitializeVectorField(&vectorField, colSize, rowSize);
 
+    Object positiveCharge = {
+            .posX = config.ORIGIN_X,
+            .posY = config.ORIGIN_Y,
+            .radius = 20,
+            .color = RED,
+            .charge = 10
+    };
+
     while (!WindowShouldClose())
     {
-        doUpdate();
-        doDrawing(&vectorField, colSize, rowSize);
+        doUpdate(&vectorField, &positiveCharge);
+        doDrawing(&vectorField, colSize, rowSize, &positiveCharge);
     }
 
     CloseWindow();
@@ -76,20 +93,24 @@ void MemAllocFailed(char *source) {
     exit(42);
 }
 
+float getRndAngle() {
+    float nMax = 360;
+    return (float)rand() / ((float)RAND_MAX / nMax); // NOLINT(cert-msc30-c, cert-msc50-cpp)
+}
+
 void InitializeVectorField(VectorField *vectorField, int colSize, int rowSize) {
     vectorField->lines = malloc(rowSize * sizeof(Line*));
     for (int i = 0; i < rowSize; i++) {
         vectorField->lines[i] = malloc(colSize * sizeof(Line));
         for (int j = 0; j < colSize; j++) {
+            Vector2 start = {
+                    (float)((j + 1) * vectorField->spacing),
+                    (float)((i + 1) * vectorField->spacing)
+            };
+            Vector2 end = {start.x + 5, start.y - 5};
             Line line = {
-                    .start = {
-                            (float)((j + 1) * vectorField->spacing),
-                            (float)((i + 1) * vectorField->spacing)
-                            },
-                    .end = {
-                            (float)((j + 1) * vectorField->spacing + 10),
-                            (float)((i + 1) * vectorField->spacing - 10)
-                            },
+                    .start = start,
+                    .end = end,
                     .color = WHITE
             };
             vectorField->lines[i][j] = line;
@@ -97,11 +118,11 @@ void InitializeVectorField(VectorField *vectorField, int colSize, int rowSize) {
     }
 }
 
-void doUpdate() {
+void doUpdate(VectorField *vectorField, Object *object) {
     float dt = GetFrameTime();
 }
 
-void doDrawing(VectorField *vectorField, int colSize, int rowSize) {
+void doDrawing(VectorField *vectorField, int colSize, int rowSize, Object *object) {
     BeginDrawing();
 
     ClearBackground(BLACK);
@@ -111,6 +132,7 @@ void doDrawing(VectorField *vectorField, int colSize, int rowSize) {
             DrawLineV(vectorField->lines[i][j].start, vectorField->lines[i][j].end, vectorField->lines[i][j].color);
         }
     }
+    DrawCircle(object->posX, object->posY, object->radius, object->color);
 
     EndDrawing();
 }
