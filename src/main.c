@@ -119,12 +119,13 @@ void InitializeVectorField(VectorField *vectorField, int colSize, int rowSize) {
 }
 
 void doUpdate(VectorField *vectorField, Object *object) {
+    float k = 5000.0f;
     float dt = GetFrameTime();
     for (int i = 0; i < vectorField->rowSize; i++) {
         for (int j = 0; j < vectorField->colSize; j++) {
             Vector2 distanceVector = Vector2Subtract(vectorField->lines[i][j].start, (Vector2){object->posX, object->posY});
-            float fieldStrength = object->charge / Vector2LengthSqr(distanceVector);
-            float vectorLineMag = fmaxf(10.0f, fieldStrength);
+            float fieldStrength = k * object->charge / Vector2LengthSqr(distanceVector);
+            float vectorLineMag = Clamp(fieldStrength, 2.0f, 20.0f);
             Vector2 directionVector = Vector2Scale(distanceVector, vectorLineMag / Vector2Length(distanceVector));
             vectorField->lines[i][j].end = Vector2Add(vectorField->lines[i][j].start, directionVector);
         }
