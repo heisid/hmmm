@@ -66,7 +66,7 @@ int main(void)
 
     Object object0 = {
             .posX = (float)config.ORIGIN_X - 200,
-            .posY = (float)config.ORIGIN_Y,
+            .posY = (float)config.ORIGIN_Y - 50,
             .radius = 20,
             .color = RED,
             .charge = 100
@@ -74,10 +74,10 @@ int main(void)
 
     Object object1 = {
             .posX = (float)config.ORIGIN_X + 200,
-            .posY = (float)config.ORIGIN_Y,
+            .posY = (float)config.ORIGIN_Y + 50,
             .radius = 20,
             .color = BLUE,
-            .charge = -100
+            .charge = -60
     };
 
 //    Object object2 = {
@@ -138,7 +138,7 @@ void InitializeVectorField(VectorField *vectorField, int colSize, int rowSize) {
 }
 
 void doUpdate(VectorField *vectorField, Object *objects, int objectNum) {
-    float forceConstant = 5000.0f;
+    float forceConstant = 2000.0f;
     float dt = GetFrameTime();
     for (int i = 0; i < vectorField->rowSize; i++) {
         for (int j = 0; j < vectorField->colSize; j++) {
@@ -158,10 +158,19 @@ void doUpdate(VectorField *vectorField, Object *objects, int objectNum) {
             resultant = Vector2Normalize(resultant);
             resultant = Vector2Scale(resultant, resultantMag);
             vectorField->lines[i][j].end = Vector2Add(vectorField->lines[i][j].start, resultant);
+            float lineLength = Vector2Length(Vector2Subtract(vectorField->lines[i][j].start, vectorField->lines[i][j].end));
+            Color color;
+            if (lineLength >= 16) color = RED;
+            else if (lineLength >= 12) color = ORANGE;
+            else if (lineLength >= 8) color = YELLOW;
+            else if (lineLength >= 4) color = GREEN;
+            else color = GRAY;
+            vectorField->lines[i][j].color = color;
         }
     }
-//    objects[0].posX += 10 * dt;
-//    objects[1].posX -= 10 * dt;
+    float speed = 20;
+    objects[0].posX += speed * dt;
+    objects[1].posX -= speed * dt;
 }
 
 void doDrawing(VectorField *vectorField, int colSize, int rowSize, Object *objects, int objectNum) {
