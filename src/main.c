@@ -58,10 +58,9 @@ void doDrawing(InitConfig config) {
     int end = config.SCREEN_WIDTH / 2;
     int start = -1 * end;
     for (int x = start; x < end; x++) {
-        float y1 = 100 * sinf((float)x/10);
-        float y2 = 100 * cosf((float)x/12);
-        float y = y1 + y2;
-        DrawPixelV(Vector2Add((Vector2){(float)x, y}, (Vector2){(float)config.ORIGIN_X, (float)config.ORIGIN_Y}), WHITE);
+        float y = 100 * sinf((float)x/10);
+        y *= -1;
+        DrawPixelV(Vector2Add((Vector2){(float)x, y}, (Vector2){(float)config.ORIGIN_X, (float)config.ORIGIN_Y}), GREEN);
     }
 
     EndDrawing();
