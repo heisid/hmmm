@@ -1,4 +1,6 @@
+#include <math.h>
 #include "raylib.h"
+#include "raymath.h"
 
 
 typedef struct InitConfig {
@@ -11,7 +13,7 @@ typedef struct InitConfig {
 } InitConfig;
 
 void doInitialization(InitConfig config);
-void doDrawing();
+void doDrawing(InitConfig config);
 void doUpdate();
 
 int main(void)
@@ -29,7 +31,7 @@ int main(void)
     while (!WindowShouldClose())
     {
         doUpdate();
-        doDrawing();
+        doDrawing(config);
     }
 
     CloseWindow();
@@ -46,10 +48,21 @@ void doUpdate() {
     float dt = GetFrameTime();
 }
 
-void doDrawing() {
+void doDrawing(InitConfig config) {
     BeginDrawing();
 
     ClearBackground(BLACK);
+    DrawLine(0, config.ORIGIN_Y, config.SCREEN_WIDTH, config.ORIGIN_Y, RED);
+    DrawLine(config.ORIGIN_X, 0, config.ORIGIN_X, config.SCREEN_HEIGHT, RED);
+
+    int end = config.SCREEN_WIDTH / 2;
+    int start = -1 * end;
+    for (int x = start; x < end; x++) {
+        float y1 = 100 * sinf((float)x/10);
+        float y2 = 100 * cosf((float)x/12);
+        float y = y1 + y2;
+        DrawPixelV(Vector2Add((Vector2){(float)x, y}, (Vector2){(float)config.ORIGIN_X, (float)config.ORIGIN_Y}), WHITE);
+    }
 
     EndDrawing();
 }
