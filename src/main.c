@@ -1,30 +1,32 @@
 #include "raylib.h"
 
 
-typedef struct InitConfig {
+typedef struct Config {
     int SCREEN_WIDTH;
     int SCREEN_HEIGHT;
     int ORIGIN_X;
     int ORIGIN_Y;
     char TITLE[20];
     int TARGET_FPS;
-} InitConfig;
+} Config;
+Config config = {
+        1500,
+        900,
+        1500 / 2,
+        900 / 2,
+        "Cool shit",
+        60
+};
 
-void doInitialization(InitConfig config);
+void doInitialization();
+Vector2 toOrigin(Vector2);
+
 void doDrawing();
 void doUpdate();
 
 int main(void)
 {
-    InitConfig config = {
-            1500,
-            900,
-            1500 / 2,
-            900 / 2,
-            "Cool shit",
-            60
-    };
-    doInitialization(config);
+    doInitialization();
 
     while (!WindowShouldClose())
     {
@@ -37,9 +39,16 @@ int main(void)
     return 0;
 }
 
-void doInitialization(InitConfig config) {
+void doInitialization() {
     InitWindow(config.SCREEN_WIDTH, config.SCREEN_HEIGHT, config.TITLE);
     SetTargetFPS(config.TARGET_FPS);
+}
+
+Vector2 toOriginV(Vector2 vector) {
+    return (Vector2) {
+        vector.x + (float)config.ORIGIN_X,
+        -1 * (vector.y + (float)config.ORIGIN_Y)
+    };
 }
 
 void doUpdate() {
