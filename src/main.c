@@ -29,6 +29,7 @@ typedef struct Object {
     float radius;
     Color color;
     float headingAngle;
+    float distanceTraveled;
 } Object;
 
 void doDrawing(Object *object);
@@ -38,10 +39,11 @@ int main(void)
 {
     doInitialization();
     Object object = {
-            .pos = (Vector2) {0, 0},
+            .pos = (Vector2) {100, 0},
             .radius = 20.0f,
             .color = BLUE,
-            .headingAngle = 90
+            .headingAngle = 90,
+            .distanceTraveled = 0
     };
 
     while (!WindowShouldClose())
@@ -86,6 +88,17 @@ Vector2 angle2HeadingVector(float angle) {
 
 void doUpdate(Object *object) {
     float dt = GetFrameTime();
+    float speed = 200.0f;
+    if (object->distanceTraveled <= 50) {
+        float nextPosDistance = speed * dt;
+        object->distanceTraveled += nextPosDistance;
+        Vector2 headingVector = angle2HeadingVector(object->headingAngle);
+        Vector2 nextPos = Vector2Add(Vector2Scale(headingVector, nextPosDistance), object->pos);
+        object->pos = nextPos;
+    } else {
+        object->headingAngle = fmodf(object->headingAngle + 15, 360.0f);
+        object->distanceTraveled = 0;
+    }
 }
 
 void doDrawing(Object *object) {
