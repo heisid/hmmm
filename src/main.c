@@ -1,4 +1,5 @@
 #include "raylib.h"
+#include "raymath.h"
 
 
 typedef struct Config {
@@ -19,8 +20,9 @@ Config config = {
 };
 
 void doInitialization();
-Vector2 toCenter(Vector2);
-Vector2 toTopLeft(Vector2);
+Vector2 toCenter(Vector2 vector);
+Vector2 toTopLeft(Vector2 vector);
+Vector2 angle2HeadingVector(float angle);
 
 void doDrawing();
 void doUpdate();
@@ -56,6 +58,13 @@ Vector2 toTopLeft(Vector2 vector) {
     return (Vector2) {
         vector.x - (float)config.ORIGIN_X,
         -1 * (vector.y - (float)config.ORIGIN_Y)
+    };
+}
+
+Vector2 angle2HeadingVector(float angle) {
+    return (Vector2) {
+        cosf(angle),
+        sinf(angle)
     };
 }
 
