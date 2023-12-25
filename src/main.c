@@ -24,17 +24,30 @@ Vector2 toCenter(Vector2 vector);
 Vector2 toTopLeft(Vector2 vector);
 Vector2 angle2HeadingVector(float angle);
 
-void doDrawing();
-void doUpdate();
+typedef struct Object {
+    Vector2 pos;
+    float radius;
+    Color color;
+    float headingAngle;
+} Object;
+
+void doDrawing(Object *object);
+void doUpdate(Object *object);
 
 int main(void)
 {
     doInitialization();
+    Object object = {
+            .pos = (Vector2) {0, 0},
+            .radius = 20.0f,
+            .color = BLUE,
+            .headingAngle = 90
+    };
 
     while (!WindowShouldClose())
     {
-        doUpdate();
-        doDrawing();
+        doUpdate(&object);
+        doDrawing(&object);
     }
 
     CloseWindow();
@@ -48,16 +61,17 @@ void doInitialization() {
 }
 
 Vector2 toCenter(Vector2 vector) {
+    // Used only for drawing, any other calculation using raylib style coordinate (0, 0) top left. x = left-right, y = top-bottom
     return (Vector2) {
         vector.x + (float)config.ORIGIN_X,
-        -1 * (vector.y + (float)config.ORIGIN_Y)
+        (-1 * vector.y) + (float)config.ORIGIN_Y
     };
 }
 
 Vector2 toTopLeft(Vector2 vector) {
     return (Vector2) {
         vector.x - (float)config.ORIGIN_X,
-        -1 * (vector.y - (float)config.ORIGIN_Y)
+        (-1 * vector.y) - (float)config.ORIGIN_Y
     };
 }
 
@@ -70,14 +84,15 @@ Vector2 angle2HeadingVector(float angle) {
     };
 }
 
-void doUpdate() {
+void doUpdate(Object *object) {
     float dt = GetFrameTime();
 }
 
-void doDrawing() {
+void doDrawing(Object *object) {
     BeginDrawing();
 
     ClearBackground(BLACK);
+    DrawCircleV(toCenter(object->pos), object->radius, object->color);
 
     EndDrawing();
 }
