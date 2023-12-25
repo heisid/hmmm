@@ -19,7 +19,8 @@ Config config = {
 };
 
 void doInitialization();
-Vector2 toOrigin(Vector2);
+Vector2 toCenter(Vector2);
+Vector2 toTopLeft(Vector2);
 
 void doDrawing();
 void doUpdate();
@@ -44,10 +45,17 @@ void doInitialization() {
     SetTargetFPS(config.TARGET_FPS);
 }
 
-Vector2 toOriginV(Vector2 vector) {
+Vector2 toCenter(Vector2 vector) {
     return (Vector2) {
         vector.x + (float)config.ORIGIN_X,
         -1 * (vector.y + (float)config.ORIGIN_Y)
+    };
+}
+
+Vector2 toTopLeft(Vector2 vector) {
+    return (Vector2) {
+        vector.x - (float)config.ORIGIN_X,
+        -1 * (vector.y - (float)config.ORIGIN_Y)
     };
 }
 
