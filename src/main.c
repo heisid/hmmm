@@ -59,6 +59,7 @@ int main(void)
 }
 
 void doInitialization() {
+    SetConfigFlags(FLAG_WINDOW_RESIZABLE);
     InitWindow(config.SCREEN_WIDTH, config.SCREEN_HEIGHT, config.TITLE);
     SetTargetFPS(config.TARGET_FPS);
 }
@@ -89,6 +90,10 @@ Vector2 angle2HeadingVector(float angle) {
 
 void doUpdate(Object *object) {
     float dt = GetFrameTime();
+    config.SCREEN_WIDTH = GetScreenWidth();
+    config.SCREEN_HEIGHT = GetScreenHeight();
+    config.ORIGIN_X = config.SCREEN_WIDTH / 2;
+    config.ORIGIN_Y = config.SCREEN_HEIGHT / 2;
     float speed = 500.0f;
     if (object->distanceTraveled <= 100) {
         float nextPosDistance = speed * dt;
