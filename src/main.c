@@ -62,6 +62,8 @@ Vector2 toTopLeft(Vector2 vector) {
 }
 
 Vector2 angle2HeadingVector(float angle) {
+    // angle in degree
+    angle = angle * (float)M_PI / 180;
     return (Vector2) {
         cosf(angle),
         sinf(angle)
