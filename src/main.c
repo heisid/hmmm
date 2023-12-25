@@ -1,3 +1,4 @@
+#include <stdlib.h>
 #include "raylib.h"
 #include "raymath.h"
 
@@ -11,11 +12,11 @@ typedef struct Config {
     int TARGET_FPS;
 } Config;
 Config config = {
-        1500,
-        900,
-        1500 / 2,
-        900 / 2,
-        "Cool shit",
+        800,
+        600,
+        800 / 2,
+        600 / 2,
+        "Gw bikin apaan sih",
         60
 };
 
@@ -39,7 +40,7 @@ int main(void)
 {
     doInitialization();
     Object object = {
-            .pos = (Vector2) {100, 0},
+            .pos = (Vector2) {0, 0},
             .radius = 20.0f,
             .color = BLUE,
             .headingAngle = 90,
@@ -88,15 +89,20 @@ Vector2 angle2HeadingVector(float angle) {
 
 void doUpdate(Object *object) {
     float dt = GetFrameTime();
-    float speed = 200.0f;
-    if (object->distanceTraveled <= 50) {
+    float speed = 500.0f;
+    if (object->distanceTraveled <= 100) {
         float nextPosDistance = speed * dt;
         object->distanceTraveled += nextPosDistance;
         Vector2 headingVector = angle2HeadingVector(object->headingAngle);
         Vector2 nextPos = Vector2Add(Vector2Scale(headingVector, nextPosDistance), object->pos);
+        if (nextPos.x - object->radius < -1 * (float)config.SCREEN_WIDTH / 2) nextPos.x = -1 * ((float)config.SCREEN_WIDTH / 2) + object->radius;
+        if (nextPos.x + object->radius > (float)config.SCREEN_WIDTH / 2) nextPos.x = ((float)config.SCREEN_WIDTH / 2) - object->radius;
+        if (nextPos.y - object->radius < -1 * (float)config.SCREEN_HEIGHT / 2) nextPos.y = -1 * ((float)config.SCREEN_HEIGHT / 2) + object->radius;
+        if (nextPos.y + object->radius > (float)config.SCREEN_HEIGHT / 2) nextPos.y = ((float)config.SCREEN_HEIGHT / 2) - object->radius;
         object->pos = nextPos;
     } else {
         object->headingAngle = fmodf(object->headingAngle + 15, 360.0f);
+        object->headingAngle = (float)rand()/(float)(RAND_MAX/360);
         object->distanceTraveled = 0;
     }
 }
@@ -106,6 +112,7 @@ void doDrawing(Object *object) {
 
     ClearBackground(BLACK);
     DrawCircleV(toCenter(object->pos), object->radius, object->color);
+    DrawText(TextFormat("Heading: %f", object->headingAngle), 50, 50, 20, RED);
 
     EndDrawing();
 }
