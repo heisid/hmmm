@@ -2,28 +2,10 @@
 #include "raylib.h"
 #include "raymath.h"
 
-
-typedef struct Config {
-    int SCREEN_WIDTH;
-    int SCREEN_HEIGHT;
-    int ORIGIN_X;
-    int ORIGIN_Y;
-    char TITLE[20];
-    int TARGET_FPS;
-} Config;
-Config config = {
-        800,
-        600,
-        800 / 2,
-        600 / 2,
-        "Gw bikin apaan sih",
-        60
-};
+#include "utilities.h"
+#include "config.h"
 
 void doInitialization();
-Vector2 toCenter(Vector2 vector);
-Vector2 toTopLeft(Vector2 vector);
-Vector2 angle2HeadingVector(float angle);
 
 typedef struct Object {
     Vector2 pos;
@@ -64,30 +46,6 @@ void doInitialization() {
     SetTargetFPS(config.TARGET_FPS);
 }
 
-Vector2 toCenter(Vector2 vector) {
-    // Used only for drawing, any other calculation using raylib style coordinate (0, 0) top left. x = left-right, y = top-bottom
-    return (Vector2) {
-        vector.x + (float)config.ORIGIN_X,
-        (-1 * vector.y) + (float)config.ORIGIN_Y
-    };
-}
-
-Vector2 toTopLeft(Vector2 vector) {
-    return (Vector2) {
-        vector.x - (float)config.ORIGIN_X,
-        (-1 * vector.y) - (float)config.ORIGIN_Y
-    };
-}
-
-Vector2 angle2HeadingVector(float angle) {
-    // angle in degree
-    angle = angle * (float)M_PI / 180;
-    return (Vector2) {
-        cosf(angle),
-        sinf(angle)
-    };
-}
-
 void doUpdate(Object *object) {
     float dt = GetFrameTime();
     config.SCREEN_WIDTH = GetScreenWidth();
@@ -106,7 +64,7 @@ void doUpdate(Object *object) {
         if (nextPos.y + object->radius > (float)config.SCREEN_HEIGHT / 2) nextPos.y = ((float)config.SCREEN_HEIGHT / 2) - object->radius;
         object->pos = nextPos;
     } else {
-        object->headingAngle = fmodf(object->headingAngle + 15, 360.0f);
+//        object->headingAngle = fmodf(object->headingAngle + 15, 360.0f);
         object->headingAngle = (float)rand()/(float)(RAND_MAX/360);
         object->distanceTraveled = 0;
     }
