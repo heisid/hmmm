@@ -67,12 +67,21 @@ int main(void)
             BLUE
     };
 
-    Ball *balls[] = {&earth, &luna, &potato};
+    Ball bijiPeler = {
+            .pos = {(float)config.SCREEN_WIDTH / 2, ((float)config.SCREEN_HEIGHT / 2) + 200},
+            .radius = 5,
+            .mass = 10,
+            .velocity = { 70.0f, 0.0f},
+            .force = {0.0f, 0.0f},
+            RED
+    };
+
+    Ball *balls[] = {&earth, &luna, &potato, &bijiPeler};
 
     while (!WindowShouldClose())
     {
-        doUpdate(balls, 3, physics);
-        doDrawing(balls, 3);
+        doUpdate(balls, 4, physics);
+        doDrawing(balls, 4);
     }
 
     CloseWindow();
